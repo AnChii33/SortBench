@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  
+  <!-- Product Information -->
+  <Product Id="*" 
+           Name="Sorting Benchmark Tool" 
+           Language="1033" 
+           Version="1.0.0.0" 
+           Manufacturer="Anurag Chattopadhyay" 
+           UpgradeCode="12345678-1234-1234-1234-123456789012">
+    
+    <!-- Package Information -->
+    <Package InstallerVersion="200" 
+             Compressed="yes" 
+             InstallScope="perUser"
+             Description="Sorting Algorithm Benchmarking Tool"
+             Comments="Educational software for comparing sorting algorithms"
+             Manufacturer="Anurag Chattopadhyay" />
+
+    <!-- Media Information -->
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- Features -->
+    <Feature Id="ProductFeature" Title="Sorting Benchmark Tool" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="DesktopShortcut" />
+    </Feature>
+
+    <!-- UI -->
+    <UI>
+      <UIRef Id="WixUI_InstallDir" />
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="CustomDisclaimer">1</Publish>
+      <Publish Dialog="CustomDisclaimer" Control="Next" Event="NewDialog" Value="InstallDirDlg">1</Publish>
+      <Publish Dialog="CustomDisclaimer" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+    </UI>
+
+    <!-- Custom Dialog for Disclaimer -->
+    <UI>
+      <Dialog Id="CustomDisclaimer" Width="370" Height="270" Title="Important Information">
+        <Control Id="DisclaimerText" Type="ScrollableText" X="20" Y="60" Width="330" Height="140" 
+                 Property="DISCLAIMER_TEXT" Sunken="yes" TabSkip="no" />
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" 
+                 Default="yes" Text="&amp;Next" />
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" 
+                 Text="&amp;Back" />
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" 
+                 Cancel="yes" Text="Cancel" />
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" 
+                 Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Important Information" />
+        <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="30" 
+                 Transparent="yes" NoPrefix="yes" 
+                 Text="Please read the following information before installing the Sorting Benchmark Tool." />
+      </Dialog>
+    </UI>
+
+    <!-- Properties -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <Property Id="DISCLAIMER_TEXT" Value="DISCLAIMER AND SYSTEM REQUIREMENTS&#13;&#10;&#13;&#10;This software is provided for educational and research purposes. The sorting algorithms included are implementations for benchmarking and comparison.&#13;&#10;&#13;&#10;FEATURES:&#13;&#10;• Multiple sorting algorithm implementations&#13;&#10;• Performance benchmarking and comparison&#13;&#10;• Dataset processing and analysis&#13;&#10;• Export capabilities for results&#13;&#10;&#13;&#10;SYSTEM REQUIREMENTS:&#13;&#10;• Windows 10/11 (64-bit)&#13;&#10;• Minimum 4GB RAM recommended&#13;&#10;• 500MB free disk space&#13;&#10;&#13;&#10;Please ensure you have adequate system resources before running extensive benchmarks on large datasets." />
+
+  </Product>
+
+  <!-- Directory Structure -->
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="LocalAppDataFolder">
+        <Directory Id="INSTALLFOLDER" Name="Sorting Benchmark Tool" />
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Sorting Benchmark Tool"/>
+      </Directory>
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+  </Fragment>
+
+  <!-- Components -->
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      
+      <!-- Main Executable -->
+      <Component Id="MainExecutable" Guid="12345678-1234-1234-1234-123456789013">
+        <File Id="SortingBenchmarkToolExe" 
+              Source="dist\SortingBenchmarkTool.exe" 
+              KeyPath="yes" 
+              Checksum="yes" />
+        
+        <!-- Registry entries for uninstall -->
+        <RegistryValue Root="HKCU" 
+                       Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\SortingBenchmarkTool"
+                       Name="DisplayName" 
+                       Value="Sorting Benchmark Tool" 
+                       Type="string" />
+        <RegistryValue Root="HKCU" 
+                       Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\SortingBenchmarkTool"
+                       Name="DisplayVersion" 
+                       Value="1.0.0" 
+                       Type="string" />
+      </Component>
+      
+    </ComponentGroup>
+
+    <!-- Application Shortcut -->
+    <Component Id="ApplicationShortcut" Directory="ApplicationProgramsFolder" Guid="12345678-1234-1234-1234-123456789014">
+      <Shortcut Id="ApplicationStartMenuShortcut" 
+                Name="Sorting Benchmark Tool" 
+                Description="Educational sorting algorithm benchmarking tool"
+                Target="[#SortingBenchmarkToolExe]" 
+                WorkingDirectory="INSTALLFOLDER" />
+      <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+      <RegistryValue Root="HKCU" Key="Software\SortingBenchmarkTool" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+    </Component>
+
+    <!-- Desktop Shortcut -->
+    <Component Id="DesktopShortcut" Directory="DesktopFolder" Guid="12345678-1234-1234-1234-123456789015">
+      <Shortcut Id="DesktopShortcut" 
+                Name="Sorting Benchmark Tool" 
+                Description="Educational sorting algorithm benchmarking tool"
+                Target="[#SortingBenchmarkToolExe]" 
+                WorkingDirectory="INSTALLFOLDER" />
+      <RegistryValue Root="HKCU" Key="Software\SortingBenchmarkTool" Name="desktop" Type="integer" Value="1" KeyPath="yes"/>
+    </Component>
+    
+  </Fragment>
+  
+</Wix>
